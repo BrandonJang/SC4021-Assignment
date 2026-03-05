@@ -28,6 +28,7 @@ def index_data():
     actions = [
         {
             "_index": INDEX_NAME,
+            "_id": row["video_id"],  # Use video_id as unique document ID to prevent duplicates
             "_source": {
                 "comment": row["comment"],
                 "likes": row["likes"],

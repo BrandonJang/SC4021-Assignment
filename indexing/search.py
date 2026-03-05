@@ -17,7 +17,7 @@ def search(query, top_k=10):
 
 if __name__ == "__main__":
     # The sample data contains "Death penalty deters crime" and "Some criminals deserve death penalty"
-    query = "death penalty"
+    query = "Has the death penalty proven to reduce crime rate"
     print(f"Searching for: '{query}'\n")
     
     try:

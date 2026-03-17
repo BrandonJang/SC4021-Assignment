@@ -5,7 +5,7 @@ import ReactECharts from "echarts-for-react";
 export default function ResultsSummary({ stats }) {
   // Pie chart data
   let positive = 0, neutral = 0, negative = 0;
-  // For line chart: group by time (e.g., date)
+  // For line chart: group by year
   let timeSeries = {};
   if (Array.isArray(stats)) {
     stats.forEach(item => {
@@ -13,14 +13,13 @@ export default function ResultsSummary({ stats }) {
       else if (item.sentiment === "neutral") neutral++;
       else if (item.sentiment === "negative") negative++;
 
-      // Group by date (or hour if you want finer granularity)
-      let dateLabel = item.created_at ? new Date(item.created_at).toLocaleDateString() : "Unknown";
-      if (!timeSeries[dateLabel]) {
-        timeSeries[dateLabel] = { positive: 0, neutral: 0, negative: 0 };
+      let yearLabel = item.published_at ? new Date(item.published_at).getFullYear().toString() : "Unknown";
+      if (!timeSeries[yearLabel]) {
+        timeSeries[yearLabel] = { positive: 0, neutral: 0, negative: 0 };
       }
-      if (item.sentiment === "positive") timeSeries[dateLabel].positive++;
-      else if (item.sentiment === "neutral") timeSeries[dateLabel].neutral++;
-      else if (item.sentiment === "negative") timeSeries[dateLabel].negative++;
+      if (item.sentiment === "positive") timeSeries[yearLabel].positive++;
+      else if (item.sentiment === "neutral") timeSeries[yearLabel].neutral++;
+      else if (item.sentiment === "negative") timeSeries[yearLabel].negative++;
     });
   } else {
     positive = stats.positive || 0;

@@ -1,30 +1,111 @@
+
+import React from "react";
+import ReactECharts from "echarts-for-react";
+
 export default function ResultsSummary({ stats }) {
-  // If stats is actually the results array, count sentiments here
+  // Pie chart data
   let positive = 0, neutral = 0, negative = 0;
+  // For line chart: group by time (e.g., date)
+  let timeSeries = {};
   if (Array.isArray(stats)) {
     stats.forEach(item => {
       if (item.sentiment === "positive") positive++;
       else if (item.sentiment === "neutral") neutral++;
       else if (item.sentiment === "negative") negative++;
+
+      // Group by date (or hour if you want finer granularity)
+      let dateLabel = item.created_at ? new Date(item.created_at).toLocaleDateString() : "Unknown";
+      if (!timeSeries[dateLabel]) {
+        timeSeries[dateLabel] = { positive: 0, neutral: 0, negative: 0 };
+      }
+      if (item.sentiment === "positive") timeSeries[dateLabel].positive++;
+      else if (item.sentiment === "neutral") timeSeries[dateLabel].neutral++;
+      else if (item.sentiment === "negative") timeSeries[dateLabel].negative++;
     });
   } else {
     positive = stats.positive || 0;
     neutral = stats.neutral || 0;
     negative = stats.negative || 0;
   }
+
+  // Prepare data for line chart
+  const sortedDates = Object.keys(timeSeries).sort((a, b) => new Date(a) - new Date(b));
+  const lineData = {
+    dates: sortedDates,
+    positive: sortedDates.map(date => timeSeries[date].positive),
+    neutral: sortedDates.map(date => timeSeries[date].neutral),
+    negative: sortedDates.map(date => timeSeries[date].negative),
+  };
+
+  const pieOption = {
+    color: ["#22c55e", "#eab308", "#ef4444"],
+    series: [
+      {
+        name: 'Sentiment',
+        type: 'pie',
+        radius: '60%',
+        data: [
+          { value: positive, name: 'Positive' },
+          { value: neutral, name: 'Neutral' },
+          { value: negative, name: 'Negative' }
+        ],
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        },
+        label: {
+          formatter: '{b}: {c} ({d}%)',
+          color: '#fff',
+        },
+      }
+    ]
+  };
+
+  const lineOption = {
+    color: ["#22c55e", "#eab308", "#ef4444"],
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['Positive', 'Neutral', 'Negative'] },
+    xAxis: {
+      type: 'category',
+      data: lineData.dates,
+      axisLabel: { color: '#fff' },
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: { color: '#fff' },
+    },
+    series: [
+      {
+        name: 'Positive',
+        type: 'line',
+        data: lineData.positive,
+        smooth: true,
+      },
+      {
+        name: 'Neutral',
+        type: 'line',
+        data: lineData.neutral,
+        smooth: true,
+      },
+      {
+        name: 'Negative',
+        type: 'line',
+        data: lineData.negative,
+        smooth: true,
+      },
+    ]
+  };
+
   return (
-    <div className="grid md:grid-cols-3 gap-6">
-      <div className="bg-green-800 rounded-xl p-5 shadow">
-        <h3 className="text-white font-semibold">Positive</h3>
-        <p className="text-3xl font-bold mt-2">{positive}</p>
+    <div className="flex flex-row justify-center items-center w-full h-80 gap-8">
+      <div className="w-1/2 h-full">
+        <ReactECharts option={pieOption} style={{ height: '100%', width: '100%' }} />
       </div>
-      <div className="bg-yellow-800 rounded-xl p-5 shadow">
-        <h3 className="text-white font-semibold">Neutral</h3>
-        <p className="text-3xl font-bold mt-2">{neutral}</p>
-      </div>
-      <div className="bg-red-800 rounded-xl p-5 shadow">
-        <h3 className="text-white font-semibold">Negative</h3>
-        <p className="text-3xl font-bold mt-2">{negative}</p>
+      <div className="w-1/2 h-full">
+        <ReactECharts option={lineOption} style={{ height: '100%', width: '100%' }} />
       </div>
     </div>
   );

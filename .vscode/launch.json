@@ -6,19 +6,8 @@
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "mainClass": "com.example.demo.BackendApplication",
-            "projectName": "Backend",
-            "args": "",
-            "envFile": "${workspaceFolder}/.env"
-        },
-        {
-            "type": "java",
-            "name": "Spring Boot-BackendApplication<ir-backend>",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "mainClass": "com.example.demo.BackendApplication",
             "projectName": "ir-backend",
-            "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "args": ""
         }
     ]
 }

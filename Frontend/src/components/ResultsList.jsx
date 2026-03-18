@@ -35,12 +35,16 @@ export default function ResultsList({ results }) {
                     </span>
                     <span
                       className={`px-3 py-1 text-sm rounded-full
-                        ${item.sentiment === "positive" && "bg-green-800 text-white"}
-                        ${item.sentiment === "neutral" && "bg-yellow-800 text-white"}
-                        ${item.sentiment === "negative" && "bg-red-800 text-white"}
+                        ${(Array.isArray(item.sentiment) ? item.sentiment[0] : item.sentiment) === "positive" && "bg-green-800 text-white"}
+                        ${(Array.isArray(item.sentiment) ? item.sentiment[0] : item.sentiment) === "neutral" && "bg-yellow-800 text-white"}
+                        ${(Array.isArray(item.sentiment) ? item.sentiment[0] : item.sentiment) === "negative" && "bg-red-800 text-white"}
                       `}
                     >
-                      {item.sentiment?.charAt(0).toUpperCase() + item.sentiment?.slice(1)}
+                      {(() => {
+                        const s = Array.isArray(item.sentiment) ? item.sentiment[0] : item.sentiment;
+                        if (!s) return "Unknown";
+                        return s.charAt(0).toUpperCase() + s.slice(1);
+                      })()}
                     </span>
                   </div>
                 </div>

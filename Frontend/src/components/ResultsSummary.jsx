@@ -1,8 +1,9 @@
 
 import React from "react";
 import ReactECharts from "echarts-for-react";
+import WordCloud from "./WordCloud";
 
-export default function ResultsSummary({ stats }) {
+export default function ResultsSummary({ stats, wordCloud }) {
   // Pie chart data
   let positive = 0, neutral = 0, negative = 0;
   // For line chart: group by year
@@ -99,12 +100,22 @@ export default function ResultsSummary({ stats }) {
   };
 
   return (
-    <div className="flex flex-row justify-center items-center w-full h-80 gap-8">
-      <div className="w-1/2 h-full">
-        <ReactECharts option={pieOption} style={{ height: '100%', width: '100%' }} />
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 w-full">
+      <div className="bg-gray-800/50 rounded-2xl p-6 h-80 border border-gray-700/50 backdrop-blur-sm shadow-xl">
+        <h3 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">Sentiment Distribution</h3>
+        <ReactECharts option={pieOption} style={{ height: '220px', width: '100%' }} />
       </div>
-      <div className="w-1/2 h-full">
-        <ReactECharts option={lineOption} style={{ height: '100%', width: '100%' }} />
+      
+      <div className="bg-gray-800/50 rounded-2xl p-6 h-80 border border-gray-700/50 backdrop-blur-sm shadow-xl">
+        <h3 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">Sentiment Trends</h3>
+        <ReactECharts option={lineOption} style={{ height: '220px', width: '100%' }} />
+      </div>
+
+      <div className="bg-gray-800/50 rounded-2xl p-6 h-80 border border-gray-700/50 backdrop-blur-sm shadow-xl flex flex-col">
+        <h3 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">Top Search Terms</h3>
+        <div className="flex-1 overflow-hidden">
+          <WordCloud data={wordCloud} />
+        </div>
       </div>
     </div>
   );

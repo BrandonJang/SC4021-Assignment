@@ -8,7 +8,7 @@ export default function SearchBar({ onSearch }) {
   const [sentiment, setSentiment] = useState("All Sentiments");
   const [date, setDate] = useState("");
   const [country, setCountry] = useState("");
-  const [maxResults, setMaxResults] = useState("All Results");
+  const [maxResults, setMaxResults] = useState(10000);
 
   const handleSearch = () => {
     if (onSearch) {

@@ -4,7 +4,11 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SolrService {
@@ -66,5 +70,47 @@ public class SolrService {
             System.out.println("Query parameters: " + query.getQuery());
             System.out.println(solrClient.query(query));
             return solrClient.query(query);
+    }
+
+    public Map<String, Integer> getWordFrequencies(QueryResponse response) {
+        Map<String, Integer> frequencies = new HashMap<>();
+        Set<String> stopWords = new HashSet<>(Arrays.asList(
+            "the", "and", "a", "to", "of", "in", "is", "it", "that", "on", "for", "with", "as", "was", "are", "be", "this", "by", "at", "or", "from", "an", "have", "not", "but", "what", "all", "were", "we", "when", "your", "can", "if", "their", "which", "about", "more", "my", "out", "so", "up", "into", "no", "how", "has", "do", "will"
+        ));
+
+        for (SolrDocument doc : response.getResults()) {
+            Object commentObj = doc.getFieldValue("comment");
+            if (commentObj != null) {
+                List<String> comments = new ArrayList<>();
+                if (commentObj instanceof String) {
+                    comments.add((String) commentObj);
+                } else if (commentObj instanceof Collection) {
+                    for (Object o : (Collection<?>) commentObj) {
+                        if (o instanceof String) {
+                            comments.add((String) o);
+                        }
+                    }
+                }
+
+                for (String comment : comments) {
+                    String[] words = comment.toLowerCase().replaceAll("[^a-zA-Z ]", "").split("\\s+");
+                    for (String word : words) {
+                        if (word.length() > 2 && !stopWords.contains(word)) {
+                            frequencies.put(word, frequencies.getOrDefault(word, 0) + 1);
+                        }
+                    }
+                }
+            }
+        }
+
+        return frequencies.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(50)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
     }
 }

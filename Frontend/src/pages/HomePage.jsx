@@ -8,6 +8,7 @@ import ResultsList from "../components/ResultsList";
 export default function HomePage() {  
 
   const [results, setResults] = useState([]);
+  const [wordCloud, setWordCloud] = useState({});
   const [resultStats, setResultStats] = useState({
     positive: 0,
     neutral: 0,
@@ -23,6 +24,7 @@ export default function HomePage() {
 
     const resultsArr = data.results || [];
     setResults(resultsArr);
+    setWordCloud(data.wordCloud || {});
 
     const stats = {
       positive: 0,
@@ -31,7 +33,8 @@ export default function HomePage() {
     };
 
     resultsArr.forEach(doc => {
-      const s = doc.sentiment?.toLowerCase();
+      let s = Array.isArray(doc.sentiment) ? doc.sentiment[0] : doc.sentiment;
+      s = s?.toLowerCase();
       if (stats[s] !== undefined) stats[s]++;
     });
 
@@ -44,7 +47,7 @@ export default function HomePage() {
 
       <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
         <SearchBar onSearch={handleSearch} />
-        <ResultsSummary stats={results} />
+        <ResultsSummary stats={results} wordCloud={wordCloud} />
         <ResultsList results={results} />
       </div>
     </div>

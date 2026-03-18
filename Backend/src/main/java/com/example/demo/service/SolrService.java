@@ -6,6 +6,11 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,46 +46,46 @@ public class SolrService {
     //     return solrClient.query(query);
     // }
 
-    /**
-     * Returns true when the keyword looks like a comparative / informational query
-     * (e.g. "how does X differ across countries", "compare A and B").
-     */
-    private boolean isComparativeQuery(String keyword) {
-        if (keyword == null) return false;
-        String lower = keyword.toLowerCase();
-        return lower.contains("differ") ||
-               lower.contains("difference") ||
-               lower.contains("compare") ||
-               lower.contains("comparison") ||
-               lower.contains("across") ||
-               lower.contains("countries") ||
-               lower.contains("versus") ||
-               lower.contains(" vs ");
+    private List<Double> getEmbedding(String text) {
+        if (text == null || text.trim().isEmpty()) return null;
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "http://localhost:5000/embed";
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            
+            // Escape quotes inside text to ensure valid JSON payload
+            String safeText = text.replace("\"", "\\\"");
+            String requestJson = "{\"text\":\"" + safeText + "\"}";
+            HttpEntity<String> entity = new HttpEntity<>(requestJson, headers);
+            
+            ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
+            return (List<Double>) response.getBody().get("vector");
+        } catch (Exception e) {
+            System.err.println("Failed to connect to Python embedding service: " + e.getMessage());
+            return null; // Fallback to keyword search if API is down
+        }
     }
 
     public QueryResponse search(String keyword, String sentiment, String date, String country, Integer maxResults) throws Exception {
         SolrQuery query = new SolrQuery();
 
-        boolean comparative = isComparativeQuery(keyword);
+        List<Double> queryVector = getEmbedding(keyword);
 
-        query.set("defType", "edismax");
-        query.set("q", "comment:" + keyword);
-        query.setRows(maxResults != null ? maxResults : 100);
-
-        if (comparative) {
-            // Stronger field & phrase boosting for analytical content
-            query.set("qf", "comment^3");
-            // Phrase boost: reward exact phrase matches heavily
-            query.set("pf", "comment^10");
-            query.set("ps", "5");   // phrase slop – allow up to 5 words apart
-            // Boost longer comments (more explanatory content)
-            query.set("bf", "log(sum(comment_length,1))");
-            // Down-rank very short posts (< ~30 chars) with a negative boost
-            query.set("bq", "_query_:\"{!frange l=30}comment_length\"^-2");
+        if (queryVector != null && !queryVector.isEmpty()) {
+            // Hybrid Approach: Keyword matches combined with Semantic similarity
+            query.set("q", "{!bool should=$kw_query should=$knn_query}");
+            query.set("kw_query", "{!edismax qf='comment^2' v=$kw_val}");
+            query.set("kw_val", keyword);
+            query.set("knn_query", "{!knn f=comment_vector topK=100}" + queryVector.toString());
         } else {
-            // Standard ranking
+            // Fallback purely to eDisMax keyword search
+            query.set("defType", "edismax");
+            query.set("q", "comment:" + keyword);
             query.set("qf", "comment^2");
         }
+
+        query.setRows(maxResults != null ? maxResults : 100);
 
         if (sentiment != null && !sentiment.equalsIgnoreCase("All Sentiments")) {
             query.addFilterQuery("sentiment:" + sentiment.toLowerCase());
@@ -94,11 +99,9 @@ public class SolrService {
             query.addFilterQuery("countries:" + country.toLowerCase());
         }
 
-        System.out.println("Comparative query detected: " + comparative);
-        System.out.println("Executing Solr query: " + query);
-        System.out.println("Query parameters: " + query.getQuery());
-        System.out.println(solrClient.query(query));
-        return solrClient.query(query);
+        System.out.println("Executing Solr Hybrid Query: " + query);
+        // Use POST instead of GET to prevent HTTP 414 "URI Too Long" errors from large vector arrays
+        return solrClient.query(query, org.apache.solr.client.solrj.SolrRequest.METHOD.POST);
     }
 
     public Map<String, Integer> getWordFrequencies(QueryResponse response) {

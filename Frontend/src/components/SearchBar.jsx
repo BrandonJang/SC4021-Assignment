@@ -6,7 +6,6 @@ export default function SearchBar({ onSearch }) {
 
   const [keyword, setKeyword] = useState("");
   const [sentiment, setSentiment] = useState("All Sentiments");
-  const [category, setCategory] = useState("All Categories");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [country, setCountry] = useState("");
@@ -17,7 +16,6 @@ export default function SearchBar({ onSearch }) {
       onSearch({
         keyword,
         sentiment,
-        category,
         startDate,
         endDate,
         country,
@@ -57,20 +55,6 @@ export default function SearchBar({ onSearch }) {
           <option>Positive</option>
           <option>Neutral</option>
           <option>Negative</option>
-        </select>
-
-        <select 
-          value={category} 
-          onChange={(e) => setCategory(e.target.value)} 
-          className="border rounded-lg px-4 py-2 bg-gray-800 text-white"
-        >
-          <option value="All Categories">All Categories</option>
-          <option value="Economics">Economics</option>
-          <option value="Ethics">Ethics</option>
-          <option value="Religion">Religion</option>
-          <option value="Social Justice">Social Justice</option>
-          <option value="Politics">Politics</option>
-          <option value="General/Agreed">General/Agreed</option>
         </select>
 
         <select

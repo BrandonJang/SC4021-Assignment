@@ -2,11 +2,16 @@ import pandas as pd
 import requests
 import json
 from sentence_transformers import SentenceTransformer
+from transformers import pipeline
 import math
 
 def main():
     print("Loading embedding model 'all-MiniLM-L6-v2'...")
     model = SentenceTransformer('all-MiniLM-L6-v2')
+    
+    print("Loading zero-shot classifier 'facebook/bart-large-mnli' (This may take a minute to download)...")
+    classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+    candidate_labels = ["Economics", "Ethics", "Religion", "Social Justice", "Politics", "General/Agreed"]
     
     # We found your actual dataset here:
     csv_file = 'Data_preprocessing/youtube_comments_with_countries.csv'
@@ -37,9 +42,19 @@ def main():
         doc = row.to_dict()
         doc['id'] = str(index) # Ensure a unique ID exists for Solr
         
-        # If there is a comment, embed it
+        # If there is a comment, embed it and categorize it
         if comment_text:
             doc['comment_vector'] = model.encode(comment_text).tolist()
+            
+            try:
+                # Text classifiers have token limits, safeguard by truncating
+                short_text = comment_text[:1000]
+                result = classifier(short_text, candidate_labels)
+                doc['category'] = result['labels'][0]  # Take the highest scoring category
+            except Exception as e:
+                doc['category'] = "Unknown"
+        else:
+            doc['category'] = "Unknown"
             
         documents.append(doc)
         

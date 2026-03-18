@@ -65,6 +65,29 @@ public class SolrService {
             System.err.println("Failed to connect to Python embedding service: " + e.getMessage());
             return null; // Fallback to keyword search if API is down
         }
+    private String expandSynonyms(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) return keyword;
+        
+        Map<String, String[]> synonymMap = new HashMap<>();        
+        // Setup a few common argument synonyms for the dataset
+        synonymMap.put("death penalty", new String[]{"execution", "capital punishment"});
+        synonymMap.put("capital punishment", new String[]{"execution", "death penalty"});
+        synonymMap.put("execution", new String[]{"death penalty", "capital punishment", "executed"});
+        synonymMap.put("money", new String[]{"economy", "financial", "taxes", "cost", "expensive"});
+        synonymMap.put("economy", new String[]{"money", "financial", "taxes", "cost"});
+        synonymMap.put("religion", new String[]{"god", "bible", "faith", "christian", "islam"});
+        synonymMap.put("race", new String[]{"racial", "racism", "black", "minority", "discrimination"});
+        synonymMap.put("racism", new String[]{"racial", "race", "black", "minority", "discrimination"});
+        
+        String expanded = keyword;
+        String lowerKeyword = keyword.toLowerCase();
+        
+        for (Map.Entry<String, String[]> entry : synonymMap.entrySet()) {
+            if (lowerKeyword.contains(entry.getKey())) {
+                expanded += " " + String.join(" ", entry.getValue());
+            }
+        }
+        return expanded;
     }
 
     public QueryResponse search(String keyword, String sentiment, String startDate, String endDate, String country, String category, Integer maxResults) throws Exception {
@@ -72,16 +95,33 @@ public class SolrService {
 
         List<Double> queryVector = getEmbedding(keyword);
 
+        // --- Search Resiliency: Synonym Expansion ---
+        String expandedKeyword = expandSynonyms(keyword);
+
+        // --- Search Resiliency: Typo Tolerance (Fuzzy Matching) ---
+        // We append ~1 for words > 3 chars, and ~2 for words > 6 chars to handle typos natively in BM25
+        String fuzzyKeyword = Arrays.stream(expandedKeyword.split("\\s+"))
+                .map(w -> {
+                    String clean = w.replaceAll("[^a-zA-Z0-9]", "");
+                    if (clean.length() > 6) return clean + "~2";
+                    if (clean.length() > 3) return clean + "~1";
+                    return clean.isEmpty() ? w : clean;
+                })
+                .collect(Collectors.joining(" "));
+        
+        // Combine raw keyword (for exact phrases/quotes) + fuzzy expanded terms
+        String robustKeyword = keyword + " " + fuzzyKeyword;
+
         if (queryVector != null && !queryVector.isEmpty()) {
             // Hybrid Approach: Keyword matches combined with Semantic similarity
             query.set("q", "{!bool should=$kw_query should=$knn_query}");
             query.set("kw_query", "{!edismax qf='comment^2' v=$kw_val}");
-            query.set("kw_val", keyword);
+            query.set("kw_val", robustKeyword);
             query.set("knn_query", "{!knn f=comment_vector topK=100}" + queryVector.toString());
         } else {
             // Fallback purely to eDisMax keyword search
             query.set("defType", "edismax");
-            query.set("q", "comment:" + keyword);
+            query.set("q", "comment:(" + robustKeyword + ")");
             query.set("qf", "comment^2");
         }
 

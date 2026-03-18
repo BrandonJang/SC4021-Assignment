@@ -67,7 +67,7 @@ public class SolrService {
         }
     }
 
-    public QueryResponse search(String keyword, String sentiment, String date, String country, Integer maxResults) throws Exception {
+    public QueryResponse search(String keyword, String sentiment, String startDate, String endDate, String country, String category, Integer maxResults) throws Exception {
         SolrQuery query = new SolrQuery();
 
         List<Double> queryVector = getEmbedding(keyword);
@@ -91,12 +91,19 @@ public class SolrService {
             query.addFilterQuery("sentiment:" + sentiment.toLowerCase());
         }
 
-        if (date != null && !date.isEmpty()) {
-            query.addFilterQuery("published_at:[" + date + "T00:00:00Z TO *]");
+        if ((startDate != null && !startDate.isEmpty()) || (endDate != null && !endDate.isEmpty())) {
+            String start = (startDate != null && !startDate.isEmpty()) ? startDate + "T00:00:00Z" : "*";
+            String end = (endDate != null && !endDate.isEmpty()) ? endDate + "T23:59:59Z" : "*";
+            query.addFilterQuery("published_at:[" + start + " TO " + end + "]");
         }
 
         if (country != null && !country.isEmpty() && !country.equalsIgnoreCase("All Countries")) {
             query.addFilterQuery("countries:" + country.toLowerCase());
+        }
+
+        if (category != null && !category.isEmpty() && !category.equalsIgnoreCase("All Categories")) {
+            // we use exact phrase matching for category since it contains spaces
+            query.addFilterQuery("category:\"" + category + "\"");
         }
 
         System.out.println("Executing Solr Hybrid Query: " + query);

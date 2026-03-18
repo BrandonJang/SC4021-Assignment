@@ -6,7 +6,9 @@ export default function SearchBar({ onSearch }) {
 
   const [keyword, setKeyword] = useState("");
   const [sentiment, setSentiment] = useState("All Sentiments");
-  const [date, setDate] = useState("");
+  const [category, setCategory] = useState("All Categories");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [country, setCountry] = useState("");
   const [maxResults, setMaxResults] = useState(10000);
 
@@ -15,7 +17,9 @@ export default function SearchBar({ onSearch }) {
       onSearch({
         keyword,
         sentiment,
-        date,
+        category,
+        startDate,
+        endDate,
         country,
         maxResults
 
@@ -55,6 +59,20 @@ export default function SearchBar({ onSearch }) {
           <option>Negative</option>
         </select>
 
+        <select 
+          value={category} 
+          onChange={(e) => setCategory(e.target.value)} 
+          className="border rounded-lg px-4 py-2 bg-gray-800 text-white"
+        >
+          <option value="All Categories">All Categories</option>
+          <option value="Economics">Economics</option>
+          <option value="Ethics">Ethics</option>
+          <option value="Religion">Religion</option>
+          <option value="Social Justice">Social Justice</option>
+          <option value="Politics">Politics</option>
+          <option value="General/Agreed">General/Agreed</option>
+        </select>
+
         <select
           value={country}
           onChange={(e) => setCountry(e.target.value)}
@@ -66,12 +84,22 @@ export default function SearchBar({ onSearch }) {
           ))}
         </select>
 
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="border rounded-lg px-4 py-2 bg-gray-800 text-white"
-        />
+        <div className="flex gap-2">
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="w-1/2 border rounded-lg px-2 py-2 bg-gray-800 text-white"
+            title="Start Date"
+          />
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="w-1/2 border rounded-lg px-2 py-2 bg-gray-800 text-white"
+            title="End Date"
+          />
+        </div>
 
         <select
           value={maxResults}

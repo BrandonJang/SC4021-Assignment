@@ -20,15 +20,21 @@ public class SearchController {
         this.solrService = solrService;
     }
 
-        @GetMapping("/search")
-        public QueryResponse search(
-                @RequestParam String keyword,
-                @RequestParam(required = false) String sentiment,
-                @RequestParam(required = false) String date,
-                @RequestParam(required = false) String country,
-                @RequestParam(required = false) Integer maxResults
-        ) throws Exception {
-            return solrService.search(keyword, sentiment, date, country, maxResults);
+    @GetMapping("/search")
+    public QueryResponse search(
+            @RequestParam String keyword,
+            @RequestParam(required = false) String sentiment,
+            @RequestParam(required = false) String date,
+            @RequestParam(required = false) String country,
+            @RequestParam(required = false) Integer maxResults
+    ) throws Exception {
+        return solrService.search(keyword, sentiment, date, country, maxResults);
+    }
+
+    @GetMapping("/indexCount")
+    public long getIndexCount() throws Exception {
+        QueryResponse response = solrService.search("*", null, null, null, 0);
+        return response.getResults().getNumFound();
     }
 
     @GetMapping("/test")

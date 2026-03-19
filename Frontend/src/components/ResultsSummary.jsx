@@ -2,7 +2,9 @@
   import WorldMap from "./WorldMap";
   import countries_and_states_geolocation from "./countries_and_states_geolocation";
 
-  export default function ResultsSummary({ stats }) {
+  import { useEffect } from "react";
+
+  export default function ResultsSummary({ stats, onRenderComplete }) {
     let positive = 0, neutral = 0, negative = 0;
     let timeSeries = {};
     const countryCounts = {};
@@ -150,8 +152,14 @@
       return { name, lat: geo.lat, lng: geo.lng, count };
     }).filter(Boolean);
 
+    useEffect(() => {
+      if (onRenderComplete) {
+        requestAnimationFrame(() => onRenderComplete());
+      }
+    }, [stats]);
+    
     return (
-  <div className="flex flex-col w-full h-screen gap-6">
+      <div className="flex flex-col w-full h-screen gap-6">
         <div className="flex flex-row justify-center items-center w-full h-1/2 gap-6">
           <div className="w-1/3 h-full">
             <ReactECharts option={pieOption} style={{ height: '100%', width: '100%' }} />

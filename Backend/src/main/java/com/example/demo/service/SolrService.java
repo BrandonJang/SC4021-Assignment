@@ -36,15 +36,6 @@ public class SolrService {
             if (country != null && !country.isEmpty() && !country.equalsIgnoreCase("All Countries")) {
                 query.addFilterQuery("countries:" + country.toLowerCase());
             }
-
-            // Optionally, add likes or video_link filters if needed
-            // Example:
-            // if (likes != null) { query.addFilterQuery("likes:" + likes); }
-            // if (video_link != null) { query.addFilterQuery("video_link:" + video_link); }
-
-            System.out.println("Executing Solr query: " + query);
-            System.out.println("Query parameters: " + query.getQuery());
-            System.out.println(solrClient.query(query));
             return solrClient.query(query);
     }
 }

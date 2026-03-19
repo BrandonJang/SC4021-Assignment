@@ -1,8 +1,32 @@
-export default function ResultsList({ results }) {
-  // console.log(results);
+import { useState, useEffect, useRef } from "react";
+
+export default function ResultsList({ results, qtime, onRenderComplete }) {
+  console.log("Rendering ResultsList with results:", results, "and qtime:", qtime);
+
+  useEffect(() => {
+    if (results.length === 0 && qtime === 0) return;
+    if (onRenderComplete) {
+      requestAnimationFrame(() => onRenderComplete());
+    }
+  }, [results]);
+  
   return (
     <div className="bg-gray-800 rounded-xl shadow p-6">
-      <h2 className="text-lg font-semibold mb-4">Query Results</h2>
+      <div className="flex items-center justify-between w-full gap-6 mb-4">
+          <div className="w-1/3"></div>
+          <div className="w-1/3 flex justify-center">
+            <h2 className="text-3xl font-semibold">Query Results</h2>
+          </div>
+          <div className="w-1/3 flex justify-end gap-6">
+            <h2 className="text-md font-semibold">
+              Total Results: {results.length}
+            </h2>
+            <h2 className="text-md font-semibold">
+              QTime: {qtime}ms
+            </h2>
+          </div>
+
+        </div>
       {results.length === 0 ? (
         <p className="text-gray-400">No results found.</p>
       ) : (

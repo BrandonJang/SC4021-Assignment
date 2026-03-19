@@ -65,6 +65,8 @@ public class SolrService {
             System.err.println("Failed to connect to Python embedding service: " + e.getMessage());
             return null; // Fallback to keyword search if API is down
         }
+    }
+
     private String expandSynonyms(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) return keyword;
         

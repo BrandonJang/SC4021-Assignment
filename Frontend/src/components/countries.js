@@ -1,4 +1,3 @@
-// List of all countries for the SearchBar country selector
 const countries = [
   "Afghanistan",
   "Albania",

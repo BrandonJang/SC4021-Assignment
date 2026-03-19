@@ -17,26 +17,6 @@ public class SolrService {
         this.solrClient = new HttpSolrClient.Builder(solrUrl).build();
     }
 
-    // public QueryResponse search(String keyword, String source, String sentiment) throws Exception {
-    //     SolrQuery query = new SolrQuery();
-
-    //     query.set("defType", "edismax");
-    //     query.set("q", keyword);
-    //     query.set("qf", "title^2 content");
-
-    //     if (!"All Sources".equals(source)) {
-    //         query.addFilterQuery("source:" + source.toLowerCase());
-    //     }
-
-    //     if (!"All Sentiments".equals(sentiment)) {
-    //         query.addFilterQuery("sentiment:" + sentiment.toLowerCase());
-    //     }
-    //     System.out.println("Executing Solr query: " + query);
-    //     System.out.println("Query parameters: " + query.getQuery());
-    //     System.out.println(solrClient.query(query));
-    //     return solrClient.query(query);
-    // }
-
         public QueryResponse search(String keyword, String sentiment, String date, String country, Integer maxResults) throws Exception {
         SolrQuery query = new SolrQuery();
 

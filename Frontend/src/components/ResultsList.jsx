@@ -1,5 +1,5 @@
 export default function ResultsList({ results }) {
-  console.log("Rendering ResultsList with results:", results);
+  // console.log(results);
   return (
     <div className="bg-gray-800 rounded-xl shadow p-6">
       <h2 className="text-lg font-semibold mb-4">Query Results</h2>

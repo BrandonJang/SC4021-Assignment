@@ -128,7 +128,7 @@ public class SolrService {
             query.addFilterQuery("category:\"" + category + "\"");
         }
 
-        System.out.println("Executing Solr Hybrid Query: " + query);
+        System.out.println("Executing Solr Hybrid Query: " + solrClient.query(query, org.apache.solr.client.solrj.SolrRequest.METHOD.POST));
         // Use POST instead of GET to prevent HTTP 414 "URI Too Long" errors from large vector arrays
         return solrClient.query(query, org.apache.solr.client.solrj.SolrRequest.METHOD.POST);
     }
@@ -173,5 +173,10 @@ public class SolrService {
                         (e1, e2) -> e1,
                         LinkedHashMap::new
                 ));
+    }
+
+    public int extractQTime(QueryResponse response) {
+        Object qTimeObj = response.getResponseHeader().get("QTime");
+        return (qTimeObj instanceof Integer) ? (Integer) qTimeObj : 0;
     }
 }

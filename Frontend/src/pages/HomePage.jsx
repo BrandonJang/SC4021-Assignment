@@ -9,17 +9,11 @@ import ResultsList from "../components/ResultsList";
 export default function HomePage() {
 
   const [queryTime, setQueryTime] = useState(0);
-  const [totalRenderTime, setTotalRenderTime] = useState(0);
   const renderStartRef = useRef(null);
   const renderCountRef = useRef(0);
   const [indexCount, setIndexCount] = useState(0);
   const [results, setResults] = useState([]);
   const [wordCloud, setWordCloud] = useState({});
-  const [resultStats, setResultStats] = useState({
-    positive: 0,
-    neutral: 0,
-    negative: 0
-  });
 
   const [lastQuery, setLastQuery] = useState(null);
   const [activeCategory, setActiveCategory] = useState("All Categories");
@@ -65,37 +59,38 @@ export default function HomePage() {
 
   const ndcgScore = calculateNDCG(results);
 
-const handleSearch = async (query, forceCategory) => {
-  const catToUse = forceCategory || activeCategory;
-  setLastQuery(query);
-  setActiveCategory(catToUse);
+  const handleSearch = async (query, forceCategory) => {
+    const catToUse = forceCategory || activeCategory;
+    setLastQuery(query);
+    setActiveCategory(catToUse);
 
-  const fullPayload = { ...query, category: catToUse };
-  const searchParams = new URLSearchParams(fullPayload).toString();
+    const fullPayload = { ...query, category: catToUse };
+    const searchParams = new URLSearchParams(fullPayload).toString();
 
-  const res = await fetch(`http://localhost:8081/api/search?${searchParams}`);
-  const data = await res.json();
+    const res = await fetch(`http://localhost:8081/api/search?${searchParams}`);
+    const data = await res.json();
 
-  const resultsArr = data.results || [];
-  setResults(resultsArr);
-  setWordCloud(data.wordCloud || {});
-  setQueryTime(data.QTime);
+    const resultsArr = data.results || [];
+    setResults(resultsArr);
+    setWordCloud(data.wordCloud || {});
+    setQueryTime(data.QTime);
+    console.log(data);
 
-  // sentiment stats
-  const stats = { positive: 0, neutral: 0, negative: 0 };
+    // sentiment stats
+    const stats = { positive: 0, neutral: 0, negative: 0 };
 
-  resultsArr.forEach(doc => {
-    let s = Array.isArray(doc.sentiment) ? doc.sentiment[0] : doc.sentiment;
-    s = s?.toLowerCase();
-    if (stats[s] !== undefined) stats[s]++;
-  });
+    resultsArr.forEach(doc => {
+      let s = Array.isArray(doc.sentiment) ? doc.sentiment[0] : doc.sentiment;
+      s = s?.toLowerCase();
+      if (stats[s] !== undefined) stats[s]++;
+    });
 
-  setResultStats(stats);
+    setResultStats(stats);
 
-  // render timing
-  renderStartRef.current = performance.now();
-  renderCountRef.current = 0;
-};
+    // render timing
+    renderStartRef.current = performance.now();
+    renderCountRef.current = 0;
+  };
 
   const handleChildRendered = () => {
     renderCountRef.current += 1;
@@ -109,8 +104,7 @@ const handleSearch = async (query, forceCategory) => {
       <Header indexCount={indexCount} />
       <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
         <SearchBar onSearch={(q) => handleSearch(q, activeCategory)} />
-        <div className="text-center text-white mt-2">Total Render Time: {(totalRenderTime / 1000).toFixed(2)}s</div>
-        <ResultsSummary stats={resultStats} wordCloud={wordCloud} onRenderComplete={handleChildRendered} />
+        <ResultsSummary stats={results} wordCloud={wordCloud} onRenderComplete={handleChildRendered} />
         
         {lastQuery !== null && (
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-2 mb-2">
@@ -146,7 +140,7 @@ const handleSearch = async (query, forceCategory) => {
           </div>
         )}
 
-        <ResultsList results={results} />
+        <ResultsList results={results} qtime={queryTime} />
       </div>
     </div>
   );

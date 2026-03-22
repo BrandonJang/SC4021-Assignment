@@ -32,12 +32,13 @@ public class SearchController {
                 @RequestParam(required = false) Integer maxResults
         ) throws Exception {
             QueryResponse response = solrService.search(keyword, sentiment, startDate, endDate, country, category, maxResults);
-            return new SearchResponse(response.getResults(), solrService.getWordFrequencies(response));
+            
+            return new SearchResponse(response.getResults(), solrService.getWordFrequencies(response), solrService.extractQTime(response));
     }
 
     @GetMapping("/indexCount")
     public long getIndexCount() throws Exception {
-        QueryResponse response = solrService.search("*", null, null, null, 0);
+        QueryResponse response = solrService.search("*", null, null, null, null, null, 0);
         return response.getResults().getNumFound();
     }
 

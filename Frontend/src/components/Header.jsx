@@ -5,13 +5,12 @@ export default function Header({ indexCount }) {
         <h1 className="text-2xl font-bold">
           Death Penalty Sentiment Analysis
         </h1>
-        <p className="bg-gray-800 rounded-xl shadow p-6">
+        <div className="bg-gray-800 rounded-xl shadow p-6 flex flex-col items-center">
           <h2 className="text-md font-semibold mb-2">Total Indexed Comments</h2>
-          <h1 className="list-disc list-inside text-sm text-white">
+          <span className="list-disc list-inside text-sm text-white">
             {indexCount}
-          </h1>
-
-        </p>
+          </span>
+        </div>
       </div>
     </header>
   );

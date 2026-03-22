@@ -8,8 +8,10 @@
     let positive = 0, neutral = 0, negative = 0;
     let timeSeries = {};
     const countryCounts = {};
+    console.log("Processing stats array:", Array.isArray(stats));
 
     if (Array.isArray(stats)) {
+      console.log("Processing stats array:", stats);
       stats.forEach(item => {
         if (item.sentiment === "positive") positive++;
         else if (item.sentiment === "neutral") neutral++;
@@ -78,6 +80,7 @@
 
     const pieOption = {
       color: ["#22c55e", "#eab308", "#ef4444"],
+      legend: { data: ['Positive', 'Neutral', 'Negative'] },
       series: [
         {
           name: 'Sentiment',
@@ -96,8 +99,12 @@
             }
           },
           label: {
-            formatter: '{b}: {c} ({d}%)',
+            show: true,
+            position: 'inside',
+            formatter: '{d}%',
             color: '#fff',
+            fontWeight: 'bold',
+            fontSize: 14
           },
         }
       ]
@@ -159,29 +166,34 @@
     }, [stats]);
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 w-full">
-      <div className="bg-gray-800/50 rounded-2xl p-6 h-80 border border-gray-700/50 backdrop-blur-sm shadow-xl">
-        <h3 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">Sentiment Distribution</h3>
-        <ReactECharts option={pieOption} style={{ height: '220px', width: '100%' }} />
-      </div>
-      
-      <div className="bg-gray-800/50 rounded-2xl p-6 h-80 border border-gray-700/50 backdrop-blur-sm shadow-xl">
-        <h3 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">Sentiment Trends</h3>
-        <ReactECharts option={lineOption} style={{ height: '220px', width: '100%' }} />
-      </div>
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 w-full">
+        <div className="bg-gray-800/50 rounded-2xl p-6 h-80 border border-gray-700/50 backdrop-blur-sm shadow-xl">
+          <h3 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">Sentiment Distribution</h3>
+          <ReactECharts option={pieOption} style={{ height: '220px', width: '100%' }} />
+        </div>
+        
+        <div className="bg-gray-800/50 rounded-2xl p-6 h-80 border border-gray-700/50 backdrop-blur-sm shadow-xl">
+          <h3 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">Sentiment Trends</h3>
+          <ReactECharts option={lineOption} style={{ height: '220px', width: '100%' }} />
+        </div>
 
-      <div className="bg-gray-800/50 rounded-2xl p-6 h-80 border border-gray-700/50 backdrop-blur-sm shadow-xl flex flex-col">
-        <h3 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">Top Search Terms</h3>
-        <div className="flex-1 overflow-hidden">
-          <WordCloud data={wordCloud} />
+        <div className="bg-gray-800/50 rounded-2xl p-6 h-80 border border-gray-700/50 backdrop-blur-sm shadow-xl flex flex-col">
+          <h3 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">Top Search Terms</h3>
+          <div className="flex-1 overflow-hidden">
+            <WordCloud data={wordCloud} />
+          </div>
         </div>
       </div>
-
-              <div className="flex justify-center items-center w-full h-5/12">
-          <div className="w-2/3 h-full">
+      
+      <div className="flex justify-center items-center w-full h-5/12">
+        <div className="w-1/1 h-80 bg-gray-800/50 rounded-2xl p-6 border border-gray-700/50 backdrop-blur-sm shadow-xl overflow-hidden">
+          <h3 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">Geographical Distribution</h3>
+          <div className="w-full h-full">
             <WorldMap countryMarkers={countryMarkers} />
           </div>
         </div>
+      </div>
     </div>
   );
 }

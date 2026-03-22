@@ -6,16 +6,18 @@ export default function SearchBar({ onSearch }) {
 
   const [keyword, setKeyword] = useState("");
   const [sentiment, setSentiment] = useState("All Sentiments");
-  const [date, setDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [country, setCountry] = useState("");
-  const [maxResults, setMaxResults] = useState("All Results");
+  const [maxResults, setMaxResults] = useState(10000);
 
   const handleSearch = () => {
     if (onSearch) {
       onSearch({
         keyword,
         sentiment,
-        date,
+        startDate,
+        endDate,
         country,
         maxResults
 
@@ -66,12 +68,22 @@ export default function SearchBar({ onSearch }) {
           ))}
         </select>
 
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="border rounded-lg px-4 py-2 bg-gray-800 text-white"
-        />
+        <div className="flex gap-2">
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="w-1/2 border rounded-lg px-2 py-2 bg-gray-800 text-white"
+            title="Start Date"
+          />
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="w-1/2 border rounded-lg px-2 py-2 bg-gray-800 text-white"
+            title="End Date"
+          />
+        </div>
 
         <select
           value={maxResults}

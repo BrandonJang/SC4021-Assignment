@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import org.apache.solr.client.solrj.response.QueryResponse;
+import com.example.demo.model.SearchResponse;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,15 +21,18 @@ public class SearchController {
         this.solrService = solrService;
     }
 
-    @GetMapping("/search")
-    public QueryResponse search(
-            @RequestParam String keyword,
-            @RequestParam(required = false) String sentiment,
-            @RequestParam(required = false) String date,
-            @RequestParam(required = false) String country,
-            @RequestParam(required = false) Integer maxResults
-    ) throws Exception {
-        return solrService.search(keyword, sentiment, date, country, maxResults);
+        @GetMapping("/search")
+        public SearchResponse search(
+                @RequestParam String keyword,
+                @RequestParam(required = false) String sentiment,
+                @RequestParam(required = false) String startDate,
+                @RequestParam(required = false) String endDate,
+                @RequestParam(required = false) String country,
+                @RequestParam(required = false) String category,
+                @RequestParam(required = false) Integer maxResults
+        ) throws Exception {
+            QueryResponse response = solrService.search(keyword, sentiment, startDate, endDate, country, category, maxResults);
+            return new SearchResponse(response.getResults(), solrService.getWordFrequencies(response));
     }
 
     @GetMapping("/indexCount")

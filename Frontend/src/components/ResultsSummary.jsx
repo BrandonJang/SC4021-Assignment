@@ -1,10 +1,10 @@
   import ReactECharts from "echarts-for-react";
   import WorldMap from "./WorldMap";
   import countries_and_states_geolocation from "./countries_and_states_geolocation";
-
+  import WordCloud from "./WordCloud";
   import { useEffect } from "react";
 
-  export default function ResultsSummary({ stats, onRenderComplete }) {
+  export default function ResultsSummary({ stats, wordCloud, onRenderComplete }) {
     let positive = 0, neutral = 0, negative = 0;
     let timeSeries = {};
     const countryCounts = {};
@@ -103,42 +103,42 @@
       ]
     };
 
-    const lineOption = {
-      color: ["#22c55e", "#eab308", "#ef4444"],
-      tooltip: { trigger: 'axis' },
-      legend: { data: ['Positive', 'Neutral', 'Negative'] },
-      xAxis: {
-        type: 'category',
-        data: lineData.dates,
-        axisLabel: { color: '#fff' },
+  const lineOption = {
+    color: ["#22c55e", "#eab308", "#ef4444"],
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['Positive', 'Neutral', 'Negative'] },
+    xAxis: {
+      type: 'category',
+      data: lineData.dates,
+      axisLabel: { color: '#fff' },
+    },
+    yAxis: {
+      type: 'value',
+      axisLabel: { color: '#fff' },
+    },
+    series: [
+      {
+        name: 'Positive',
+        type: 'line',
+        data: lineData.positive,
+        smooth: true,
       },
-      yAxis: {
-        type: 'value',
-        axisLabel: { color: '#fff' },
+      {
+        name: 'Neutral',
+        type: 'line',
+        data: lineData.neutral,
+        smooth: true,
       },
-      series: [
-        {
-          name: 'Positive',
-          type: 'line',
-          data: lineData.positive,
-          smooth: true,
-        },
-        {
-          name: 'Neutral',
-          type: 'line',
-          data: lineData.neutral,
-          smooth: true,
-        },
-        {
-          name: 'Negative',
-          type: 'line',
-          data: lineData.negative,
-          smooth: true,
-        },
-      ]
-    };
+      {
+        name: 'Negative',
+        type: 'line',
+        data: lineData.negative,
+        smooth: true,
+      },
+    ]
+  };
 
-    const countryMarkers = Object.entries(countryCounts).map(([name, count]) => {
+  const countryMarkers = Object.entries(countryCounts).map(([name, count]) => {
       const cleanName = name
       .trim()
       .replace(/^"+|"+$/g, "")
@@ -157,22 +157,31 @@
         requestAnimationFrame(() => onRenderComplete());
       }
     }, [stats]);
-    
-    return (
-      <div className="flex flex-col w-full h-screen gap-6">
-        <div className="flex flex-row justify-center items-center w-full h-1/2 gap-6">
-          <div className="w-1/3 h-full">
-            <ReactECharts option={pieOption} style={{ height: '100%', width: '100%' }} />
-          </div>
-          <div className="w-1/3 h-full">
-            <ReactECharts option={lineOption} style={{ height: '100%', width: '100%' }} />
-          </div>
+
+  return (
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 w-full">
+      <div className="bg-gray-800/50 rounded-2xl p-6 h-80 border border-gray-700/50 backdrop-blur-sm shadow-xl">
+        <h3 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">Sentiment Distribution</h3>
+        <ReactECharts option={pieOption} style={{ height: '220px', width: '100%' }} />
+      </div>
+      
+      <div className="bg-gray-800/50 rounded-2xl p-6 h-80 border border-gray-700/50 backdrop-blur-sm shadow-xl">
+        <h3 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">Sentiment Trends</h3>
+        <ReactECharts option={lineOption} style={{ height: '220px', width: '100%' }} />
+      </div>
+
+      <div className="bg-gray-800/50 rounded-2xl p-6 h-80 border border-gray-700/50 backdrop-blur-sm shadow-xl flex flex-col">
+        <h3 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wider">Top Search Terms</h3>
+        <div className="flex-1 overflow-hidden">
+          <WordCloud data={wordCloud} />
         </div>
-        <div className="flex justify-center items-center w-full h-5/12">
+      </div>
+
+              <div className="flex justify-center items-center w-full h-5/12">
           <div className="w-2/3 h-full">
             <WorldMap countryMarkers={countryMarkers} />
           </div>
         </div>
-      </div>
-    );
-  }
+    </div>
+  );
+}

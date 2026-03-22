@@ -30,7 +30,16 @@ export default function ResultsList({ results, qtime, onRenderComplete }) {
       {results.length === 0 ? (
         <p className="text-gray-400">No results found.</p>
       ) : (
-        results.map((item, idx) => {
+        results
+          .filter((item, index, self) => {
+            // Helper to get the actual comment string
+            const getComment = (c) => Array.isArray(c) ? c[0] : c;
+            const currentComment = getComment(item.comment);
+            
+            // Only keep the first occurrence of this comment text
+            return index === self.findIndex((t) => getComment(t.comment) === currentComment);
+          })
+          .map((item, idx) => {
 
           const getYouTubeId = (url) => {
             if (!url) return null;
@@ -50,22 +59,31 @@ export default function ResultsList({ results, qtime, onRenderComplete }) {
                   </h3>
                   <div className="flex justify-between mb-1">
                     <span className="text-xs text-gray-400">
-                      {Array.isArray(item.published_at)
+                      {item.published_at ? (Array.isArray(item.published_at)
                         ? new Date(item.published_at[0]).toLocaleDateString()
-                        : new Date(item.published_at).toLocaleDateString()}
+                        : new Date(item.published_at).toLocaleDateString()) : "Unknown date"}
                     </span>
                     <span className="text-xs text-gray-400">
-                      {Array.isArray(item.likes) ? `Likes: ${item.likes[0]}` : `Likes: ${item.likes}`}
+                      {Array.isArray(item.likes) ? `Likes: ${item.likes[0]}` : `Likes: ${item.likes || 0}`}
                     </span>
                     <span
                       className={`px-3 py-1 text-sm rounded-full
-                        ${item.sentiment === "positive" && "bg-green-800 text-white"}
-                        ${item.sentiment === "neutral" && "bg-yellow-800 text-white"}
-                        ${item.sentiment === "negative" && "bg-red-800 text-white"}
+                        ${(Array.isArray(item.sentiment) ? item.sentiment[0] : item.sentiment) === "positive" && "bg-green-800 text-white"}
+                        ${(Array.isArray(item.sentiment) ? item.sentiment[0] : item.sentiment) === "neutral" && "bg-yellow-800 text-white"}
+                        ${(Array.isArray(item.sentiment) ? item.sentiment[0] : item.sentiment) === "negative" && "bg-red-800 text-white"}
                       `}
                     >
-                      {item.sentiment?.charAt(0).toUpperCase() + item.sentiment?.slice(1)}
+                      {(() => {
+                        const s = Array.isArray(item.sentiment) ? item.sentiment[0] : item.sentiment;
+                        if (!s) return "Unknown";
+                        return s.charAt(0).toUpperCase() + s.slice(1);
+                      })()}
                     </span>
+                    {item.category && (
+                      <span className="px-3 py-1 text-sm rounded-full bg-blue-800 text-white ml-2">
+                        {Array.isArray(item.category) ? item.category[0] : item.category}
+                      </span>
+                    )}
                   </div>
                 </div>
 

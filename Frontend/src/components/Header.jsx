@@ -7,7 +7,7 @@ export default function Header({ indexCount }) {
         </h1>
         <div className="bg-gray-800 rounded-xl shadow p-6 flex flex-col items-center">
           <h2 className="text-md font-semibold mb-2">Total Indexed Comments</h2>
-          <span className="list-disc list-inside text-sm text-white">
+          <span className="text-3xl font-bold text-white">
             {indexCount}
           </span>
         </div>

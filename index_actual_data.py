@@ -14,7 +14,7 @@ def main():
     candidate_labels = ["Economics", "Ethics", "Religion", "Social Justice", "Politics", "General/Agreed"]
     
     # We found your actual dataset here:
-    csv_file = 'Data_preprocessing/youtube_comments_with_countries.csv'
+    csv_file = 'Data_preprocessing/youtube_comments_with_countries_and_states.csv'
     solr_url = 'http://localhost:8983/solr/youtube_comments/update?commit=true'
     headers = {'Content-type': 'application/json'}
     

@@ -14,7 +14,11 @@ export default function HomePage() {
   const [indexCount, setIndexCount] = useState(0);
   const [results, setResults] = useState([]);
   const [wordCloud, setWordCloud] = useState({});
-
+  const [resultStats, setResultStats] = useState({
+    positive: 0,
+    neutral: 0,
+    negative: 0
+  });
   const [lastQuery, setLastQuery] = useState(null);
   const [activeCategory, setActiveCategory] = useState("All Categories");
   const categories = ["All Categories", "Economics", "Ethics", "Religion", "Social Justice", "Politics", "General/Agreed"];
@@ -73,8 +77,7 @@ export default function HomePage() {
     const resultsArr = data.results || [];
     setResults(resultsArr);
     setWordCloud(data.wordCloud || {});
-    setQueryTime(data.QTime);
-    console.log(data);
+    setQueryTime(data.queryTime);
 
     // sentiment stats
     const stats = { positive: 0, neutral: 0, negative: 0 };

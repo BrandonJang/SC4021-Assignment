@@ -3,6 +3,7 @@ package com.example.demo.service;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class SolrService {
             ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
             return (List<Double>) response.getBody().get("vector");
         } catch (Exception e) {
-            System.err.println("Failed to connect to Python embedding service: " + e.getMessage());
+            //System.err.println("Failed to connect to Python embedding service: " + e.getMessage());
             return null; // Fallback to keyword search if API is down
         }
     }
@@ -128,7 +129,13 @@ public class SolrService {
             query.addFilterQuery("category:\"" + category + "\"");
         }
 
-        System.out.println("Executing Solr Hybrid Query: " + solrClient.query(query, org.apache.solr.client.solrj.SolrRequest.METHOD.POST));
+        // Spellcheck
+        query.set("spellcheck.q", keyword);
+        query.set("spellcheck", "true");
+        query.set("spellcheck.collate", "true");
+        query.set("spellcheck.count", "1");
+        
+        //System.out.println("Executing Solr Hybrid Query: " + solrClient.query(query, org.apache.solr.client.solrj.SolrRequest.METHOD.POST));
         // Use POST instead of GET to prevent HTTP 414 "URI Too Long" errors from large vector arrays
         return solrClient.query(query, org.apache.solr.client.solrj.SolrRequest.METHOD.POST);
     }
@@ -178,5 +185,12 @@ public class SolrService {
     public int extractQTime(QueryResponse response) {
         Object qTimeObj = response.getResponseHeader().get("QTime");
         return (qTimeObj instanceof Integer) ? (Integer) qTimeObj : 0;
+    }
+
+    public String getSpellcheckSuggestion(QueryResponse response) {
+        if (response.getSpellCheckResponse() != null && response.getSpellCheckResponse().getCollatedResult() != null) {
+            return response.getSpellCheckResponse().getCollatedResult();
+        }
+        return null;
     }
 }

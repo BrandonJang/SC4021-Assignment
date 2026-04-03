@@ -8,10 +8,8 @@
     let positive = 0, neutral = 0, negative = 0;
     let timeSeries = {};
     const countryCounts = {};
-    console.log("Processing stats array:", Array.isArray(stats));
 
     if (Array.isArray(stats)) {
-      console.log("Processing stats array:", stats);
       stats.forEach(item => {
         if (item.sentiment === "positive") positive++;
         else if (item.sentiment === "neutral") neutral++;

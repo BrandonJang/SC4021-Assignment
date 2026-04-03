@@ -7,11 +7,13 @@ public class SearchResponse {
     private SolrDocumentList results;
     private Map<String, Integer> wordCloud;
     private int queryTime;
+    private String spellcheckSuggestion;
 
-    public SearchResponse(SolrDocumentList results, Map<String, Integer> wordCloud, int queryTime) {
+    public SearchResponse(SolrDocumentList results, Map<String, Integer> wordCloud, int queryTime, String spellcheckSuggestion) {
         this.results = results;
         this.wordCloud = wordCloud;
         this.queryTime = queryTime;
+        this.spellcheckSuggestion = spellcheckSuggestion;
     }
 
     public SolrDocumentList getResults() {
@@ -36,5 +38,13 @@ public class SearchResponse {
 
     public void setQueryTime(int queryTime) {
         this.queryTime = queryTime;
+    }
+
+    public String getSpellcheckSuggestion() {
+        return spellcheckSuggestion;
+    }
+
+    public void setSpellcheckSuggestion(String spellcheckSuggestion) {
+        this.spellcheckSuggestion = spellcheckSuggestion;
     }
 }

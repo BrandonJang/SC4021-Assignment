@@ -33,7 +33,7 @@ public class SearchController {
         ) throws Exception {
             QueryResponse response = solrService.search(keyword, sentiment, startDate, endDate, country, category, maxResults);
             
-            return new SearchResponse(response.getResults(), solrService.getWordFrequencies(response), solrService.extractQTime(response));
+            return new SearchResponse(response.getResults(), solrService.getWordFrequencies(response), solrService.extractQTime(response), solrService.getSpellcheckSuggestion(response));
     }
 
     @GetMapping("/indexCount")

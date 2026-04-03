@@ -22,6 +22,7 @@ export default function HomePage() {
   const [lastQuery, setLastQuery] = useState(null);
   const [activeCategory, setActiveCategory] = useState("All Categories");
   const categories = ["All Categories", "Economics", "Ethics", "Religion", "Social Justice", "Politics", "General/Agreed"];
+  const [spellcheckSuggestion, setSpellcheckSuggestion] = useState(null);
 
   useEffect(() => {
     const fetchIndexCount = async () => {
@@ -78,6 +79,7 @@ export default function HomePage() {
     setResults(resultsArr);
     setWordCloud(data.wordCloud || {});
     setQueryTime(data.queryTime);
+    setSpellcheckSuggestion(data.spellcheckSuggestion || null);
 
     // sentiment stats
     const stats = { positive: 0, neutral: 0, negative: 0 };
@@ -106,7 +108,7 @@ export default function HomePage() {
     <div>
       <Header indexCount={indexCount} />
       <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
-        <SearchBar onSearch={(q) => handleSearch(q, activeCategory)} />
+        <SearchBar onSearch={(q) => handleSearch(q, activeCategory)} spellcheckSuggestion={spellcheckSuggestion} />
         <ResultsSummary stats={results} wordCloud={wordCloud} onRenderComplete={handleChildRendered} />
         
         {lastQuery !== null && (

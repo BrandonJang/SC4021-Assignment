@@ -2,7 +2,7 @@
 import { useState } from "react";
 import countries from "./countries";
 
-export default function SearchBar({ onSearch }) {
+export default function SearchBar({ onSearch, spellcheckSuggestion }) {
 
   const [keyword, setKeyword] = useState("");
   const [sentiment, setSentiment] = useState("All Sentiments");
@@ -44,6 +44,22 @@ export default function SearchBar({ onSearch }) {
           Search
         </button>
       </div>
+
+      {spellcheckSuggestion && spellcheckSuggestion !== keyword && (
+        <p className="mt-2 text-red-400">
+          Did you mean{" "}
+          <span
+            className="underline cursor-pointer"
+            onClick={() => {
+              setKeyword(spellcheckSuggestion);
+              handleSearch(spellcheckSuggestion);
+            }}
+          >
+            {spellcheckSuggestion}
+          </span>
+          ?
+        </p>
+      )}
 
       <div className="grid md:grid-cols-3 gap-4 mt-6">
         <select 

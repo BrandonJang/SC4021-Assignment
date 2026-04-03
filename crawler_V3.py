@@ -1,17 +1,24 @@
+# ---------------- CONFIG ----------------
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-import pandas as pd
-from langdetect import detect, DetectorFactory
 
-DetectorFactory.seed = 0
-
-# ---------------- CONFIG ----------------
 API_KEY = "AIzaSyCSJbYyEr6vO97YQpCNEJrEXucckBgS6gk"
 QUERY = "Is the death penalty good or bad"
 TARGET_COMMENTS = 20000
 
 youtube = build("youtube", "v3", developerKey=API_KEY)
 
+# ---------------- LANGUAGE FILTER ----------------
+from langdetect import detect, DetectorFactory
+
+DetectorFactory.seed = 0
+
+def is_english(text):
+    try:
+        return detect(text) == "en"
+    except:
+        return False
+        
 # ---------------- LABELING ----------------
 positive_keywords = [
     "support", "agree", "good", "necessary",
@@ -37,14 +44,7 @@ def label_comment(text):
             return "negative"
 
     return None
-
-# ---------------- LANGUAGE FILTER ----------------
-def is_english(text):
-    try:
-        return detect(text) == "en"
-    except:
-        return False
-
+    
 # ---------------- GET VIDEOS ----------------
 def get_videos(query, max_videos=500):
     video_ids = []
@@ -134,6 +134,8 @@ for i, vid in enumerate(video_ids):
         break
 
 # ---------------- SAVE ----------------
+import pandas as pd
+
 df = pd.DataFrame(dataset, columns=[
     "comment", "video_link", "likes", "published_at", "sentiment"
 ])

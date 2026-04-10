@@ -1,6 +1,22 @@
 # SC4021-Assignment
 
-## Setup Instructions
+## Project Overview
+
+
+## System Architecture
+
+The application follows a microservices-inspired architecture to separate concerns and optimize performance:
+
+```mermaid
+graph TD
+    A[Frontend: React/Vite] -->|REST API| B[Backend: Spring Boot]
+    B -->|Search/Filter| C[Search Engine: Apache Solr]
+    B -->|Generate Embeddings| D[Embedding API: Python/Flask]
+    D -->|Sentence Transformers| E[Embedding Model]
+    F[Data Pipeline: Python] -->|Preprocessing & Vectorization| C
+```
+
+## Running the Application
 ### 1. Solr Setup
 Ensure Apache Solr is running on your machine.
 - Start Solr: `bin/solr start`
@@ -33,3 +49,11 @@ npm run dev
 ```
 *Note: The frontend runs on `http://localhost:5173`.*
 
+## Data Pipeline & Indexing
+
+To populate the system with data, run the indexing script which handles text cleaning, vector embedding generation, and classification:
+
+```bash
+python index_actual_data.py
+```
+*Note: Ensure Solr and the Embedding API are running before starting the indexing process.*

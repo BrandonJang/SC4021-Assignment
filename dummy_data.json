@@ -1,0 +1,82 @@
+[
+  {
+    "id": "1",
+    "title": "Debate Continues Over the Death Penalty",
+    "content": "Some people believe the death penalty is necessary for justice, while others argue it is outdated and unethical.",
+    "source": "reddit",
+    "sentiment": "neutral",
+    "created_at": "2026-02-01T10:00:00Z"
+  },
+  {
+    "id": "2",
+    "title": "Death Penalty as a Crime Deterrent",
+    "content": "Supporters argue that capital punishment discourages serious crimes and protects society.",
+    "source": "news",
+    "sentiment": "positive",
+    "created_at": "2026-02-02T12:30:00Z"
+  },
+  {
+    "id": "3",
+    "title": "Human Rights Groups Oppose Execution Policies",
+    "content": "Activists claim the death penalty violates human rights and risks executing innocent people.",
+    "source": "news",
+    "sentiment": "negative",
+    "created_at": "2026-02-03T09:45:00Z"
+  },
+  {
+    "id": "4",
+    "title": "Public Opinion Split on Capital Punishment",
+    "content": "Online discussions show mixed views about fairness and effectiveness of the death penalty.",
+    "source": "reddit",
+    "sentiment": "neutral",
+    "created_at": "2026-02-04T18:20:00Z"
+  },
+  {
+    "id": "5",
+    "title": "Victims' Families Support Stronger Sentencing",
+    "content": "Some families believe the death penalty provides closure and justice for severe crimes.",
+    "source": "twitter",
+    "sentiment": "positive",
+    "created_at": "2026-02-05T14:10:00Z"
+  },
+  {
+    "id": "6",
+    "title": "Concerns About Wrongful Convictions",
+    "content": "Critics argue that errors in the legal system make the death penalty too risky to enforce.",
+    "source": "news",
+    "sentiment": "negative",
+    "created_at": "2026-02-06T08:55:00Z"
+  },
+  {
+    "id": "7",
+    "title": "Debate on Ethical Implications of Execution",
+    "content": "Philosophical debates continue regarding whether governments should have the authority to take lives.",
+    "source": "reddit",
+    "sentiment": "neutral",
+    "created_at": "2026-02-07T20:05:00Z"
+  },
+  {
+    "id": "8",
+    "title": "Stronger Laws Proposed for Violent Crimes",
+    "content": "Some policymakers suggest expanding the death penalty for extreme criminal cases.",
+    "source": "news",
+    "sentiment": "positive",
+    "created_at": "2026-02-08T11:40:00Z"
+  },
+  {
+    "id": "9",
+    "title": "International Trends Show Decline in Executions",
+    "content": "Many countries are moving away from capital punishment due to ethical and legal concerns.",
+    "source": "news",
+    "sentiment": "negative",
+    "created_at": "2026-02-09T16:25:00Z"
+  },
+  {
+    "id": "10",
+    "title": "Social Media Discussions on Justice Systems",
+    "content": "Users express both support and opposition toward the death penalty across online platforms.",
+    "source": "twitter",
+    "sentiment": "neutral",
+    "created_at": "2026-02-10T13:15:00Z"
+  }
+]

@@ -1,0 +1,9 @@
+CompileCommand: exclude com/github/benmanes/caffeine/cache/BoundedLocalCache.put bool exclude = true
+2026-04-04 14:51:05.861 INFO  (main) [] o.e.j.s.Server jetty-10.0.26; built: 2025-08-14T15:56:56.454Z; git: 65a55c55a68c56d5f2e8232164439bd6e76e53d1; jvm 21.0.7+8-LTS-245
+2026-04-04 14:51:06.772 WARN  (main) [] o.e.j.u.DeprecationWarning Using @Deprecated Class org.eclipse.jetty.servlet.listener.ELContextCleaner
+2026-04-04 14:51:06.832 INFO  (main) [] o.a.s.s.CoreContainerProvider Using logger factory org.apache.logging.slf4j.Log4jLoggerFactory
+2026-04-04 14:51:06.853 INFO  (main) [] o.a.s.s.CoreContainerProvider  ___      _       Welcome to Apache Solr™ version 9.10.1
+2026-04-04 14:51:06.853 INFO  (main) [] o.a.s.s.CoreContainerProvider / __| ___| |_ _   Starting in standalone mode on port 8983
+2026-04-04 14:51:06.855 INFO  (main) [] o.a.s.s.CoreContainerProvider \__ \/ _ \ | '_|  Install dir: C:\Tools\solr-9.10.1\solr-9.10.1
+2026-04-04 14:51:06.855 INFO  (main) [] o.a.s.s.CoreContainerProvider |___/\___/_|_|    Start time: 2026-04-04T14:51:06.855237Z
+2026-04-04 14:51:06.860 INFO  (main) [] o.a.s.s.CoreContainerProvider Solr started with "-XX:+CrashOnOutOfMemoryError" that will crash on any OutOfMemoryError exception. The cause of the OOME will be logged in the crash file at the following path: C:\Tools\solr-9.10.1\solr-9.10.1\server\logs\jvm_crash_38212.log

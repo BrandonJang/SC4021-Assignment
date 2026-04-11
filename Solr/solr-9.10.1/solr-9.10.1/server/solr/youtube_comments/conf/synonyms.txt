@@ -1,0 +1,103 @@
+usa, united states, united states of america, america, u.s., u.s.a.
+uk, united kingdom, great britain, britain
+uae, u.a.e., united arab emirates
+south korea, republic of korea, korea south
+north korea, dprk, democratic people's republic of korea
+russia, russian federation
+china, people's republic of china, prc
+taiwan, republic of china
+india, republic of india
+singapore, sg
+malaysia, my
+indonesia, id
+philippines, ph
+vietnam, viet nam
+thailand, th
+japan, nippon
+germany, federal republic of germany
+france, french republic
+italy, italian republic
+canada, ca
+australia, au
+california, ca, calif
+texas, tx
+new york, ny, nyc
+florida, fl
+illinois, il
+pennsylvania, pa
+ohio, oh
+georgia, ga
+north carolina, nc
+michigan, mi
+new jersey, nj
+virginia, va
+washington, wa
+arizona, az
+massachusetts, ma
+tennessee, tn
+indiana, in
+missouri, mo
+maryland, md
+wisconsin, wi
+colorado, co
+minnesota, mn
+south carolina, sc
+alabama, al
+louisiana, la
+kentucky, ky
+oregon, or
+oklahoma, ok
+connecticut, ct
+utah, ut
+iowa, ia
+nevada, nv
+arkansas, ar
+mississippi, ms
+kansas, ks
+new mexico, nm
+nebraska, ne
+idaho, id
+west virginia, wv
+hawaii, hi
+new hampshire, nh
+maine, me
+montana, mt
+rhode island, ri
+delaware, de
+south dakota, sd
+north dakota, nd
+alaska, ak
+vermont, vt
+wyoming, wyoming, wy
+district of columbia, dc, washington dc
+death penalty, capital punishment, execution, judicial execution
+law, legislation, legal system, judiciary
+court, tribunal, justice system
+sentence, sentencing, punishment, penalty
+convict, offender, criminal, defendant
+trial, hearing, legal proceeding
+punishment, penalty, sanction, retribution
+deterrence, prevention, discouragement
+justice, fairness, retribution
+harsh, severe, strict
+abolish, repeal, ban, eliminate
+anti-death penalty, opposition, protest
+inhumane, unethical, immoral
+wrongful conviction, miscarriage of justice
+human rights, civil rights
+support, favor, endorse, advocate
+pro-death penalty, approval
+justice served, deserved punishment
+deterrent, crime prevention
+crime, offense, wrongdoing, violation
+murder, homicide, killing
+violent crime, serious crime, felony
+policy, regulation, law
+government, authority, state
+international law, global policy
+good, beneficial, effective
+bad, harmful, ineffective
+agree, support, approve
+disagree, oppose, reject
+fair, just
+unfair, unjust

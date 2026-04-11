@@ -1,0 +1,12 @@
+{
+  "add-field": [
+    {"name":"comment","type":"text_general","stored":true},
+    {"name":"video_link","type":"string","stored":true},
+    {"name":"likes","type":"pint","stored":true},
+    {"name":"published_at","type":"pdate","stored":true},
+    {"name":"sentiment","type":"string","stored":true},
+    {"name":"country","type":"string","stored":true},
+    {"name":"comment_vector","type":"knn_vector","stored":true},
+    {"name":"category","type":"string","stored":true}
+  ]
+}

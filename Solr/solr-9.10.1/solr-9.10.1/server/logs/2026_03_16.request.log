@@ -1,0 +1,17 @@
+127.0.0.1 - - [16/Mar/2026:13:11:50 +0000] "GET /solr/admin/info/system?wt=javabin&version=2 HTTP/2.0" 200 2859
+127.0.0.1 - - [16/Mar/2026:13:13:43 +0000] "GET /solr/document/select?defType=edismax&q=death&qf=title%5E2+content&wt=javabin&version=2 HTTP/1.1" 200 1687
+127.0.0.1 - - [16/Mar/2026:13:13:43 +0000] "GET /solr/document/select?defType=edismax&q=death&qf=title%5E2+content&wt=javabin&version=2 HTTP/1.1" 200 1686
+127.0.0.1 - - [16/Mar/2026:14:23:27 +0000] "GET /solr/document/select?defType=edismax&q=is+death+penalty+good%3F&qf=title%5E2+content&wt=javabin&version=2 HTTP/1.1" 200 1704
+127.0.0.1 - - [16/Mar/2026:14:23:27 +0000] "GET /solr/document/select?defType=edismax&q=is+death+penalty+good%3F&qf=title%5E2+content&wt=javabin&version=2 HTTP/1.1" 200 1703
+127.0.0.1 - - [16/Mar/2026:14:23:55 +0000] "GET /solr/document/select?defType=edismax&q=is+death+penalty+good%3F&qf=title%5E2+content&fq=sentiment%3Apositive&wt=javabin&version=2 HTTP/1.1" 200 777
+127.0.0.1 - - [16/Mar/2026:14:23:55 +0000] "GET /solr/document/select?defType=edismax&q=is+death+penalty+good%3F&qf=title%5E2+content&fq=sentiment%3Apositive&wt=javabin&version=2 HTTP/1.1" 200 776
+127.0.0.1 - - [16/Mar/2026:14:23:59 +0000] "GET /solr/document/select?defType=edismax&q=is+death+penalty+good%3F&qf=title%5E2+content&wt=javabin&version=2 HTTP/1.1" 200 1703
+127.0.0.1 - - [16/Mar/2026:14:23:59 +0000] "GET /solr/document/select?defType=edismax&q=is+death+penalty+good%3F&qf=title%5E2+content&wt=javabin&version=2 HTTP/1.1" 200 1703
+127.0.0.1 - - [16/Mar/2026:15:43:12 +0000] "GET /solr/document/select?defType=edismax&q=is&qf=title%5E2+content&wt=javabin&version=2 HTTP/1.1" 200 399
+127.0.0.1 - - [16/Mar/2026:15:43:12 +0000] "GET /solr/document/select?defType=edismax&q=is&qf=title%5E2+content&wt=javabin&version=2 HTTP/1.1" 200 399
+127.0.0.1 - - [16/Mar/2026:15:43:36 +0000] "GET /solr/document/select?defType=edismax&q=death&qf=title%5E2+content&wt=javabin&version=2 HTTP/1.1" 200 1686
+127.0.0.1 - - [16/Mar/2026:15:43:36 +0000] "GET /solr/document/select?defType=edismax&q=death&qf=title%5E2+content&wt=javabin&version=2 HTTP/1.1" 200 1686
+127.0.0.1 - - [16/Mar/2026:15:44:22 +0000] "GET /solr/document/select?defType=edismax&q=deatg&qf=title%5E2+content&wt=javabin&version=2 HTTP/1.1" 200 135
+127.0.0.1 - - [16/Mar/2026:15:44:22 +0000] "GET /solr/document/select?defType=edismax&q=deatg&qf=title%5E2+content&wt=javabin&version=2 HTTP/1.1" 200 135
+127.0.0.1 - - [16/Mar/2026:15:44:26 +0000] "GET /solr/document/select?defType=edismax&q=death&qf=title%5E2+content&wt=javabin&version=2 HTTP/1.1" 200 1686
+127.0.0.1 - - [16/Mar/2026:15:44:26 +0000] "GET /solr/document/select?defType=edismax&q=death&qf=title%5E2+content&wt=javabin&version=2 HTTP/1.1" 200 1686

@@ -2,9 +2,9 @@
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-API_KEY = "AIzaSyCSJbYyEr6vO97YQpCNEJrEXucckBgS6gk"
-QUERY = "Is the death penalty good or bad"
-TARGET_COMMENTS = 20000
+API_KEY = "ENTER＿API＿KEY＿HERE" #Create API key from Google Cloud console
+QUERY = "Is the death penalty good or bad" #What videos do you want your comments from
+TARGET_COMMENTS = 20000 #Enter how many comments you want to get
 
 youtube = build("youtube", "v3", developerKey=API_KEY)
 

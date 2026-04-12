@@ -3,6 +3,8 @@
 ## Project Overview
 This project develops an search engine for exploring public perspectives on the death penalty using YouTube comments as the primary data source. It combines Apache Solr with hybrid search, fuzzy matching, and advanced filtering for effective information retrieval. A hierarchical sentiment analysis pipeline enhanced with hybrid features and stacked ensemble models improves classification performance. The system is deployed as a full-stack web application with interactive visualizations for deeper insight.
 
+## Youtube Link - https://www.youtube.com/watch?v=IyyyV28RZY8
+
 ## System Architecture
 
 The application follows a microservices-inspired architecture to separate concerns and optimize performance:
@@ -21,6 +23,13 @@ graph TD
 Ensure Apache Solr is running on your machine.
 - Start Solr: `bin/solr start`
 - Create the required core: `bin/solr create -c youtube_comments`
+- Run the following command to insert the schema.
+```powershell
+curl.exe http://localhost:8983/solr/youtube_comments/schema `
+  -X POST `
+  -H "Content-type:application/json" `
+  --data-binary "@yt_comments_schema.json"
+```
 
 ### 2. Embedding API (Python)
 This service must be running for both indexing and searching to work correctly.

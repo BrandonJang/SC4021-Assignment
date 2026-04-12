@@ -17,6 +17,92 @@ graph TD
     D -->|Sentence Transformers| E[Embedding Model]
     F[Data Pipeline: Python] -->|Preprocessing & Vectorization| C
 ```
+## Crawling
+This Python-based YouTube crawler collects and labels comments from videos related to the topic:
+
+"Is the death penalty good or bad?"
+
+The script uses the YouTube Data API to:
+
+Search for relevant videos
+Extract comments from those videos
+Filter for English comments only
+Automatically label sentiment (positive / negative)
+Save the dataset into a CSV file
+
+Some features that comes with this crawler are:
+Video Search using keyword query
+Large-scale comment extraction
+Language filtering
+Rule-based sentiment labeling
+Duplicate removal
+CSV dataset export
+
+Python libraries/tools used:
+googleapiclient (YouTube Data API)
+pandas
+langdetect
+
+The generated CSV file: youtube_death_penalty_dataset.csv
+
+Contains the following columns:
+
+comment - The text of the YouTube comment
+video_link - Link to the source video
+likes - Number of likes on the comment
+published_at - Timestamp of the comment
+sentiment - Label: positive or negative
+
+How It Works:
+
+1. Video Retrieval
+Searches YouTube using the query: Is the death penalty good or bad
+Collects up to 1000 videos
+
+2. Comment Extraction
+Retrieves top-level comments from each video
+Skips videos with disabled comments
+
+3. Language Filtering
+Uses langdetect to keep only English comments
+
+4. Sentiment Labeling
+
+Rule-based classification using keyword matching:
+
+Positive keywords:
+
+support, agree, good, necessary, deserve, justice, deterrent, etc.
+
+Negative keywords:
+
+against, wrong, inhumane, cruel, abolish, barbaric, etc.
+
+Comments without matching keywords are discarded.
+
+5. Dataset Creation
+Stops when 20,000 labeled comments are collected
+Removes duplicate comments
+Saves results to CSV
+
+Installation:
+
+Install required dependencies:
+pip install pandas google-api-python-client langdetect
+
+Setup (Very important!):
+
+Get a YouTube Data API key from: https://console.cloud.google.com/
+Replace the API key in the script:
+API_KEY = "ENTER_API_KEY_HERE"
+
+Usage:
+
+Run the script: 
+python crawler_V3.py
+
+You will see progress logs like: 12/1000 videos processed | collected: 3500
+
 
 ## Running the Application
 ### 1. Solr Setup

@@ -154,11 +154,74 @@ python index_actual_data.py
 *Note: Ensure Solr and the Embedding API are running before starting the indexing process.*
 
 
-## Classification Question  4 (How to We Run Evaluation of Dataset)
+## Classification Question  4 (How to Run Evaluation of Dataset)
 
 1) Download eval.csv & rest_of_data.csv
 2) Download eval.ipynb
 3) Ensure all the files above are in the same directory
 4) Click Run on Jupyter Notebook (eval.ipynb)
+
+
+## Classification Enhancements 
+
+## 1. Dependencies
+Install the required Python packages before running the script.
+```bash
+pip install numpy pandas scikit-learn scipy
+```
+### Optional dependency
+For the VADER sentiment feature:
+```bash
+pip install vaderSentiment
+```
+If `vaderSentiment` is not installed, the code still runs. The VADER feature is simply set to `0.0` for all samples.
+
+---
+
+## 2. How to Run
+1. Place the dataset file in the same folder as the Python script.
+2. Make sure the dataset filename matches:
+```python
+DATA_PATH = "youtube_death_penalty_dataset.csv"
+```
+3. Run the script:
+```bash
+python your_script_name.py
+```
+Replace `your_script_name.py` with the actual filename of your Python file.
+
+---
+
+## 3. What the Script Outputs
+The script prints:
+- dataset size
+- label distribution
+- training progress for each model
+- accuracy for each model
+- macro-F1 for each model
+- full classification report
+- confusion matrix
+- final summary table for the ablation study
+
+### Evaluation metrics
+
+#### Accuracy
+The proportion of total predictions that are correct.
+
+#### Macro-F1
+The average F1-score across both classes, giving equal importance to `positive` and `negative`.
+Macro-F1 is especially useful when checking whether the model performs well on both classes rather than just one.
+
+---
+
+## 4. Ablation Study Setup
+The code is structured to support a clear comparison of feature/model design choices.
+The ablation study compares:
+1. **Baseline**: word TF-IDF + Logistic Regression
+2. **Hybrid**: word TF-IDF + char TF-IDF + symbolic features
+3. **Ensemble**: stacked text-based models
+4. **Combined**: hybrid model inside a stacked ensemble
+
+This lets justifies whether each added technique actually improves performance.
 
 

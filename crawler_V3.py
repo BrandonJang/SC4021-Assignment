@@ -6,9 +6,9 @@ from langdetect import detect, DetectorFactory
 DetectorFactory.seed = 0
 
 # ---------------- CONFIG ----------------
-API_KEY = "AIzaSyCSJbYyEr6vO97YQpCNEJrEXucckBgS6gk"
-QUERY = "Is the death penalty good or bad"
-TARGET_COMMENTS = 20000
+API_KEY = "ENTER_API_KEY_HERE" #Create API key on google cloud console
+QUERY = "Is the death penalty good or bad" 
+TARGET_COMMENTS = 20000 
 
 youtube = build("youtube", "v3", developerKey=API_KEY)
 

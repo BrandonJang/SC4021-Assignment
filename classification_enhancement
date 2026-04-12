@@ -1,0 +1,290 @@
+# ============================================================
+# Q5: (1) Hybrid classification + (2) Stacked ensemble
+# + Ablation: Baseline vs Hybrid vs Ensemble vs Hybrid+Ensemble (combined)
+# Dataset: youtube_death_penalty_dataset.csv (2 cols, no header)
+#   col0 = text, col1 = label in {"positive","negative"}
+# ============================================================
+
+import re
+import numpy as np
+import pandas as pd
+
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline, FeatureUnion
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.ensemble import StackingClassifier
+from sklearn.metrics import accuracy_score, f1_score, classification_report, confusion_matrix
+from sklearn.base import BaseEstimator, TransformerMixin
+from scipy import sparse
+
+# ----------------------------
+# OPTIONAL: VADER sentiment (symbolic feature)
+# pip install vaderSentiment
+# ----------------------------
+try:
+    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+    _vader = SentimentIntensityAnalyzer()
+
+    def vader_compound(text: str) -> float:
+        return float(_vader.polarity_scores(text)["compound"])
+except Exception:
+    _vader = None
+
+    def vader_compound(text: str) -> float:
+        return 0.0
+
+# ============================================================
+# 1) Load dataset
+# ============================================================
+DATA_PATH = "youtube_death_penalty_dataset.csv"  # <-- change if needed
+
+df = pd.read_csv(DATA_PATH, header=None, names=["text", "label"]).dropna()
+df["text"] = df["text"].astype(str)
+df["label"] = df["label"].astype(str).str.lower().str.strip()
+df = df[df["label"].isin(["positive", "negative"])].reset_index(drop=True)
+
+print(f"Dataset size: {df.shape}")
+print("Label distribution:\n", df["label"].value_counts(), "\n")
+
+X = df["text"].tolist()
+y = df["label"].tolist()
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.20, random_state=42, stratify=y
+)
+
+# ============================================================
+# 2) Shared text normalization (keeps social text manageable)
+# ============================================================
+def normalize_text(s: str) -> str:
+    s = s.strip()
+    s = re.sub(r"(.)\1{2,}", r"\1\1", s)              
+    s = re.sub(r"([#@])", r" \1", s)                     
+    s = re.sub(r"([!?.,])", r" \1 ", s)                  
+    s = re.sub(r"\s+", " ", s)
+    return s.lower()
+
+# ============================================================
+# 3) HYBRID FEATURES: symbolic + subsymbolic (TF-IDF)
+# ============================================================
+NEGATIONS = {"not", "no", "never", "n't", "cannot", "can't", "won't", "dont", "don't"}
+
+# Lightweight domain lexicon (death penalty discourse)
+DOMAIN_TERMS = {
+    "death penalty", "capital punishment", "life sentence", "deterrent", "deterrence",
+    "innocent", "murder", "killer", "crime", "justice", "human rights", "rehabilitation",
+    "execute", "execution", "prison", "victim", "deserve", "morally", "barbaric"
+}
+
+def count_domain_hits(text: str) -> int:
+    t = normalize_text(text)
+    hits = 0
+    for phrase in DOMAIN_TERMS:
+        if phrase in t:
+            hits += 1
+    return hits
+
+class SymbolicFeatureExtractor(BaseEstimator, TransformerMixin):
+    """
+    Outputs scaled numeric features (all in roughly [0,1] or [-1,1]) so they
+    won't dominate TF-IDF features.
+
+    Features:
+      0) vader compound in [-1, 1] (or 0 if VADER not installed)
+      1) negation count clipped/normalized
+      2) exclamation count clipped/normalized
+      3) question count clipped/normalized
+      4) ALLCAPS token count clipped/normalized
+      5) length clipped/normalized
+      6) domain term hits clipped/normalized
+    """
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        feats = []
+        for text in X:
+            t_norm = normalize_text(text)
+            toks = re.findall(r"[a-zA-Z']+", t_norm)
+
+            neg_cnt = sum(1 for w in toks if w in NEGATIONS)
+            excl = text.count("!")
+            ques = text.count("?")
+            allcaps = sum(1 for w in re.findall(r"\b[A-Z]{2,}\b", text))
+            length = len(toks)
+            dom = count_domain_hits(text)
+            vader = vader_compound(text) if _vader is not None else 0.0  # already [-1,1]
+
+            # ---- Fix A: clip + normalize to small ranges ----
+            neg_s  = min(neg_cnt, 10) / 10.0
+            excl_s = min(excl, 10) / 10.0
+            ques_s = min(ques, 10) / 10.0
+            cap_s  = min(allcaps, 10) / 10.0
+            len_s  = min(length, 200) / 200.0
+            dom_s  = min(dom, 8) / 8.0
+
+            feats.append([vader, neg_s, excl_s, ques_s, cap_s, len_s, dom_s])
+
+        arr = np.array(feats, dtype=np.float32)
+        return sparse.csr_matrix(arr)
+
+def make_word_tfidf():
+    return TfidfVectorizer(
+        preprocessor=normalize_text,
+        ngram_range=(1, 2),
+        min_df=2,
+        max_features=50000
+    )
+
+def make_char_tfidf():
+    return TfidfVectorizer(
+        preprocessor=normalize_text,
+        analyzer="char",
+        ngram_range=(4, 5),
+        min_df=3,
+        max_features=12000
+    )
+
+# ============================================================
+# 4) Models
+# ============================================================
+
+# ---- Baseline: word TF-IDF + Logistic Regression
+baseline_model = Pipeline([
+    ("tfidf", make_word_tfidf()),
+    ("clf", LogisticRegression(
+        solver="saga",
+        max_iter=4000,
+        C=1.0,
+        class_weight="balanced"
+    ))
+])
+
+# ---- Hybrid: (word TF-IDF + char TF-IDF + symbolic) -> Logistic Regression
+hybrid_model = Pipeline([
+    ("features", FeatureUnion([
+        ("word", make_word_tfidf()),
+        ("char", make_char_tfidf()),
+        ("symb", SymbolicFeatureExtractor()),
+    ])),
+    ("clf", LogisticRegression(
+        solver="saga",
+        max_iter=6000,
+        C=0.7,
+        class_weight="balanced"
+    ))
+])
+
+# ---- Stacked ensemble (text-only base models + meta LR)
+stack_a = Pipeline([
+    ("tfidf", make_word_tfidf()),
+    ("clf", LogisticRegression(
+        solver="saga",
+        max_iter=4000,
+        C=1.0,
+        class_weight="balanced"
+    ))
+])
+
+stack_b = Pipeline([
+    ("tfidf", make_char_tfidf()),
+    ("clf", LogisticRegression(
+        solver="saga",
+        max_iter=4000,
+        C=0.7,
+        class_weight="balanced"
+    ))
+])
+
+stack_c = Pipeline([
+    ("tfidf", make_word_tfidf()),
+    ("clf", MultinomialNB(alpha=0.5))
+])
+
+stacked_ensemble = StackingClassifier(
+    estimators=[
+        ("word_lr", stack_a),
+        ("char_lr", stack_b),
+        ("word_nb", stack_c),
+    ],
+    final_estimator=LogisticRegression(
+        solver="lbfgs",
+        max_iter=2000,
+        class_weight="balanced"
+    ),
+    cv=3,
+    stack_method="auto",
+    n_jobs=-1
+)
+
+# ---- Combined model: Hybrid + Stacked Ensemble (BOTH innovations)
+hybrid_plus_ensemble = StackingClassifier(
+    estimators=[
+        ("hybrid_lr", hybrid_model),  # hybrid innovation inside the ensemble
+        ("word_lr", stack_a),
+        ("char_lr", stack_b),
+        ("word_nb", stack_c),
+    ],
+    final_estimator=LogisticRegression(
+        solver="lbfgs",
+        max_iter=2000,
+        class_weight="balanced"
+    ),
+    cv=3,
+    stack_method="auto",
+    n_jobs=-1
+)
+
+# ============================================================
+# 5) Evaluation helpers
+# ============================================================
+def eval_model(name, model, X_test, y_test):
+    pred = model.predict(X_test)
+    acc = accuracy_score(y_test, pred)
+    macro_f1 = f1_score(y_test, pred, average="macro")
+
+    print(f"\n==================== {name} ====================")
+    print(f"Accuracy: {acc:.4f} | Macro-F1: {macro_f1:.4f}")
+    print("\nPer-class report:")
+    print(classification_report(y_test, pred, labels=["negative", "positive"], zero_division=0))
+
+    cm = confusion_matrix(y_test, pred, labels=["negative", "positive"])
+    cm_df = pd.DataFrame(
+        cm,
+        index=["true_negative", "true_positive"],
+        columns=["pred_negative", "pred_positive"]
+    )
+    print("Confusion matrix:")
+    print(cm_df.to_string())
+    return acc, macro_f1
+
+# ============================================================
+# 6) Train + compare (ablation-friendly)
+# ============================================================
+print("Training baseline...")
+baseline_model.fit(X_train, y_train)
+
+print("Training hybrid...")
+hybrid_model.fit(X_train, y_train)
+
+print("Training stacked ensemble...")
+stacked_ensemble.fit(X_train, y_train)
+
+print("Training hybrid + stacked ensemble (combined)...")
+hybrid_plus_ensemble.fit(X_train, y_train)
+
+results = []
+results.append(("Baseline (word TF-IDF + LR)",) + eval_model("Baseline (word TF-IDF + LR)", baseline_model, X_test, y_test))
+results.append(("Hybrid (word+char TF-IDF + symbolic)",) + eval_model("Hybrid (word+char TF-IDF + symbolic)", hybrid_model, X_test, y_test))
+results.append(("Stacked ensemble (word LR + char LR + NB)",) + eval_model("Stacked ensemble (word LR + char LR + NB)", stacked_ensemble, X_test, y_test))
+results.append(("Hybrid + Stacked ensemble (combined)",) + eval_model("Hybrid + Stacked ensemble (combined)", hybrid_plus_ensemble, X_test, y_test))
+
+print("\n==================== Summary Table (Ablation Study) ====================")
+summary = pd.DataFrame(results, columns=["Model", "Accuracy", "Macro-F1"]).sort_values("Macro-F1", ascending=False)
+print(summary.to_string(index=False))
+
+if _vader is None:
+    print("\nNOTE: vaderSentiment not installed; VADER feature is 0.0 for all samples.")
+    print("Install it via: pip install vaderSentiment")

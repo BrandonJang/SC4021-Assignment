@@ -1,7 +1,7 @@
 # SC4021-Assignment
 
 ## Project Overview
-
+This project develops an search engine for exploring public perspectives on the death penalty using YouTube comments as the primary data source. It combines Apache Solr with hybrid search, fuzzy matching, and advanced filtering for effective information retrieval. A hierarchical sentiment analysis pipeline enhanced with hybrid features and stacked ensemble models improves classification performance. The system is deployed as a full-stack web application with interactive visualizations for deeper insight.
 
 ## System Architecture
 

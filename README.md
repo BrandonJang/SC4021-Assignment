@@ -66,3 +66,13 @@ To populate the system with data, run the indexing script which handles text cle
 python index_actual_data.py
 ```
 *Note: Ensure Solr and the Embedding API are running before starting the indexing process.*
+
+
+## Classification Question  4 (How to We Run Evaluation of Dataset)
+
+1) Download eval.csv & rest_of_data.csv
+2) Download eval.ipynb
+3) Ensure all the files above are in the same directory
+4) Click Run on Jupyter Notebook (eval.ipynb)
+
+

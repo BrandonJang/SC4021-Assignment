@@ -23,86 +23,88 @@ This Python-based YouTube crawler collects and labels comments from videos relat
 "Is the death penalty good or bad?"
 
 The script uses the YouTube Data API to:
-
-Search for relevant videos
-Extract comments from those videos
-Filter for English comments only
-Automatically label sentiment (positive / negative)
-Save the dataset into a CSV file
+- Search for relevant videos
+- Extract comments from those videos
+- Filter for English comments only
+- Automatically label sentiment (positive / negative)
+- Save the dataset into a CSV file
 
 Some features that comes with this crawler are:
-Video Search using keyword query
-Large-scale comment extraction
-Language filtering
-Rule-based sentiment labeling
-Duplicate removal
-CSV dataset export
+- Video search using keyword query
+- Large-scale comment extraction
+- Language filtering
+- Rule-based sentiment labeling
+- Duplicate removal
+- CSV dataset export
 
 Python libraries/tools used:
-googleapiclient (YouTube Data API)
-pandas
-langdetect
+- googleapiclient (YouTube Data API)
+- pandas
+- langdetect
 
-The generated CSV file: youtube_death_penalty_dataset.csv
-
+The generated CSV file: 
+```bash
+youtube_death_penalty_dataset.csv
+```
 Contains the following columns:
 
-comment - The text of the YouTube comment
-video_link - Link to the source video
-likes - Number of likes on the comment
-published_at - Timestamp of the comment
-sentiment - Label: positive or negative
+- comment - The text of the YouTube comment
+- video_link - Link to the source video
+- likes - Number of likes on the comment
+- published_at - Timestamp of the comment
+- sentiment - Label: positive or negative
 
 How It Works:
 
 1. Video Retrieval
-Searches YouTube using the query: Is the death penalty good or bad
-Collects up to 1000 videos
+Searches YouTube using the query:
+```bash
+Is the death penalty good or bad
+```
+2. Collects up to 1000 videos
 
-2. Comment Extraction
+3. Comment Extraction
 Retrieves top-level comments from each video
 Skips videos with disabled comments
 
-3. Language Filtering
+4. Language Filtering
 Uses langdetect to keep only English comments
 
-4. Sentiment Labeling
-
+5. Sentiment Labeling
 Rule-based classification using keyword matching:
+- Positive keywords: support, agree, good, necessary, deserve, justice, deterrent, etc.
+- Negative keywords: against, wrong, inhumane, cruel, abolish, barbaric, etc.
+- Comments without matching keywords are discarded.
 
-Positive keywords:
-
-support, agree, good, necessary, deserve, justice, deterrent, etc.
-
-Negative keywords:
-
-against, wrong, inhumane, cruel, abolish, barbaric, etc.
-
-Comments without matching keywords are discarded.
-
-5. Dataset Creation
-Stops when 20,000 labeled comments are collected
-Removes duplicate comments
-Saves results to CSV
+6. Dataset Creation
+- Stops when 20,000 labeled comments are collected
+- Removes duplicate comments
+- Saves results to CSV
 
 Installation:
 
 Install required dependencies:
+```bash
 pip install pandas google-api-python-client langdetect
-
+```
 Setup (Very important!):
 
 Get a YouTube Data API key from: https://console.cloud.google.com/
-Replace the API key in the script:
-API_KEY = "ENTER_API_KEY_HERE"
 
+Replace the API key in the script:
+```bash
+API_KEY = "ENTER_API_KEY_HERE"
+```
 Usage:
 
 Run the script: 
+```bash
 python crawler_V3.py
-
-You will see progress logs like: 12/1000 videos processed | collected: 3500
-
+```
+You will see progress logs like: 
+```bash
+12/1000 videos processed | collected: 3500
+```
 
 ## Running the Application
 ### 1. Solr Setup

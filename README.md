@@ -23,7 +23,7 @@ graph TD
 Ensure Apache Solr is running on your machine.
 - Start Solr: `bin/solr start`
 - Create the required core: `bin/solr create -c youtube_comments`
-- Run the following command to insert the schema.
+- Run the following command in powershell to insert the schema.
 ```powershell
 curl.exe http://localhost:8983/solr/youtube_comments/schema `
   -X POST `
